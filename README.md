@@ -18,7 +18,7 @@ Since this is Electron-based, it can be built for macOS and Windows, but I don't
 
 ## Features
 
-- **Multiple Profiles**: Supports different profiles (i.e. `ai-desk-wrap --chatgpt`, `ai-desk-wrap --claude`, ...)
+- **Multiple Profiles**: Supports different profiles (i.e. `ai-desk-wrap --profile=chatgpt`, `ai-desk-wrap --profile=claude`, ...)
 - **Isolated Storage**: Configuration stored under `~/.config/ai-desk-wrap/<profile_name>` (or similar on other platforms)
 - **First Launch Setup**: Automatically prompts for URL configuration on first run
 - **Authentication Support**: Stores cookies and session data in profile directories
