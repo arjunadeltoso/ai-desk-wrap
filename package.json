@@ -1,0 +1,74 @@
+{
+  "name": "ai-desk-wrap",
+  "version": "1.0.0",
+  "description": "A simple web browser wrapper for AI web tools with profile support",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "npx electron . --no-sandbox",
+    "dev": "npx electron . --dev --no-sandbox",
+    "list-profiles": "npx electron . --no-sandbox --list-profiles",
+    "start:claude": "npx electron . --no-sandbox --profile=claude",
+    "start:openai": "npx electron . --no-sandbox --profile=openai",
+    "dist-linux": "npx electron-builder --linux AppImage",
+    "dist-mac": "npx electron-builder --mac",
+    "dist-windows": "npx electron-builder --win",
+    "dist-all": "npx electron-builder --linux AppImage --mac --win",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "keywords": ["electron", "ai", "chatgpt", "claude", "browser", "wrapper"],
+  "author": {
+    "name": "Arjuna Del Toso",
+    "url": "https://deltoso.net"
+  },
+  "license": "CC-BY-NC-SA-4.0",
+  "dependencies": {
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "electron": "22.3.25",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.aideskwrap.app",
+    "productName": "AIDeskWrap",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "linux": {
+      "icon": "assets/",
+      "target": {
+        "target": "AppImage",
+        "arch": ["x64"]
+      },
+      "category": "Utility",
+      "desktop": {
+        "Icon": "aideskwrap"
+      }
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "mac": {
+      "icon": "assets/icon.icns",
+      "target": [
+        {
+          "target": "dir",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "category": "public.app-category.productivity"
+    }
+  }
+}

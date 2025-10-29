@@ -1,0 +1,39 @@
+services:
+  # Base build service - builds the Docker image
+  ai-desk-wrap-build:
+    build: .
+    volumes:
+      # Mount dist directory to get build artifacts
+      - ./dist:/app/dist
+      # Cache electron and electron-builder downloads between builds
+      - electron-cache:/root/.cache/electron
+      - electron-builder-cache:/root/.cache/electron-builder
+    working_dir: /app
+    environment:
+      - ELECTRON_CACHE=/root/.cache/electron
+      - ELECTRON_BUILDER_CACHE=/root/.cache/electron-builder
+
+  # Linux AppImage build
+  build-linux:
+    extends: ai-desk-wrap-build
+    command: npm run dist-linux
+
+  # Windows NSIS installer build
+  build-windows:
+    extends: ai-desk-wrap-build
+    command: npm run dist-windows
+
+  # macOS app bundle build
+  build-mac:
+    extends: ai-desk-wrap-build
+    command: npm run dist-mac
+
+  # All platforms build
+  build-all:
+    extends: ai-desk-wrap-build
+    command: npm run dist-all
+
+# Named volumes for caching downloaded binaries
+volumes:
+  electron-cache:
+  electron-builder-cache:
