@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/AIDeskWrap-128x128.png" alt="AIDeskWrap Logo" width="128" height="128">
+</p>
+
 # AIDeskWrap
 
 `AIDeskWrap` is a simple web browser wrapper (Electron-based) for any AI web tools. The advantage is that you can start it independently from your web browser, start multiple separate instances and it works cross platform on Linux, Mac and Windows.
