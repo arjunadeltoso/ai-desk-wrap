@@ -4,7 +4,17 @@
 
 # AIDeskWrap
 
-`AIDeskWrap` is a simple web browser wrapper (Electron-based) for any AI web tools. The advantage is that you can start it independently from your web browser, start multiple separate instances and it works cross platform on Linux, Mac and Windows.
+**AIDeskWrap** is a lightweight, Linux-first web wrapper that treats web applications as native desktop windows. Unlike heavyweight official apps, AIDeskWrap gives you:
+
+- **True multi-instance support** - Run ChatGPT, Claude, and any web app simultaneously with completely isolated sessions
+- **Profile-based workflow** - Keep work and personal AI conversations separate, or manage multiple client accounts
+- **Window manager integration** - Each instance is a first-class window in your Linux workflow (i3, sway, KDE, GNOME, etc.)
+- **Universal web wrapper** - Not just for AI - use it for Todoist, Gmail, or any web app you want as a desktop window
+- **Privacy-focused** - Your data stays local in `~/.config`, with full control over cookies and storage per profile
+
+Built for Linux users who prefer lightweight, composable tools over bloated Electron apps with features you don't need.
+
+Since this is Electron-based, it can be built for macOS and Windows, but I don't own any to be able to test. Note that both platforms have native ChatGPT and Claude desktop applications.
 
 ## Features
 
@@ -16,7 +26,7 @@
 
 ## Requirements
 
-AIDeskWrap proven to build on my Ubuntu Linux 20.04LTS with:
+AIDeskWrap is proven to build on Ubuntu Linux 20.04 LTS with:
 
 - **Docker**: v28.1.1
 - **Docker Compose**: v2.35.1

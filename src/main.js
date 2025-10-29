@@ -1,8 +1,9 @@
-const { app, BrowserWindow, dialog, ipcMain, Menu, clipboard } = require("electron");
+const { app, BrowserWindow, dialog, ipcMain, Menu, clipboard, shell } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
 const yargs = require("yargs");
+const { spawn } = require("child_process");
 
 const ProfileManager = require("./lib/ProfileManager");
 const SetupManager = require("./lib/SetupManager");
@@ -16,6 +17,9 @@ class AIDeskWrap {
     this.profileModal = new ProfileModal(this.profileManager);
     this.window = null;
     this.profileName = "default";
+
+    // Resolve preload path once to avoid issues in AppImage
+    this.preloadPath = path.join(__dirname, "preload.js");
 
     // Define all command-line options in one place
     this.cliOptions = [
@@ -129,17 +133,21 @@ class AIDeskWrap {
 
     this.profileName = profileName;
     console.log(`Starting AIDeskWrap with profile: ${this.profileName}`);
+
+    // CRITICAL: Set userData path immediately in constructor, before app.whenReady()
+    // Electron caches userData on first access, so this must happen early
+    const profilePath = this.profileManager.ensureProfileDirectory(
+      this.profileName
+    );
+    app.setPath("userData", profilePath);
+    console.log(`Set userData path to: ${profilePath}`);
   }
 
   async createWindow() {
     let finalConfig;
-    
+
     try {
-      // Ensure profile directory exists before setting userData path
-      const profilePath = this.profileManager.ensureProfileDirectory(
-        this.profileName
-      );
-      app.setPath("userData", profilePath);
+      // Profile directory and userData path already set in constructor
 
       const profileConfig = this.profileManager.getProfileConfig(
         this.profileName
@@ -173,7 +181,7 @@ class AIDeskWrap {
         nodeIntegration: false,
         contextIsolation: true,
         partition: `persist:${this.profileName}`,
-        preload: path.join(__dirname, "preload.js"),
+        preload: this.preloadPath,
       },
       titleBarStyle: "default",
       title: `AIDeskWrap - ${this.profileName}`,
@@ -272,6 +280,42 @@ class AIDeskWrap {
     });
   }
 
+  launchNewInstance(profileName) {
+    // Launch a completely new application instance with the specified profile
+    const args = [`--profile=${profileName}`];
+
+    // Get the executable path - handle both development and packaged app
+    let execPath;
+    if (app.isPackaged) {
+      // In AppImage, process.execPath points to temporary mount path
+      // Use APPIMAGE env var which points to the actual .AppImage file
+      if (process.env.APPIMAGE) {
+        execPath = process.env.APPIMAGE;
+        console.log(`Using AppImage path: ${execPath}`);
+      } else {
+        // Other packaged formats (deb, rpm, etc.)
+        execPath = process.execPath;
+      }
+    } else {
+      // In development, use electron with the main script
+      execPath = process.argv[0];
+      args.unshift(process.argv[1]); // Add main.js path
+    }
+
+    console.log(`Launching new instance: ${execPath} ${args.join(' ')}`);
+
+    // Spawn detached process so it continues running independently
+    const child = spawn(execPath, args, {
+      detached: true,
+      stdio: 'ignore'
+    });
+
+    // Unreference so parent can exit independently
+    child.unref();
+
+    console.log(`New instance launched for profile: ${profileName}`);
+  }
+
   async createNewWindow(profileName) {
     try {
       // Ensure profile exists, if not, show setup
@@ -296,7 +340,7 @@ class AIDeskWrap {
           nodeIntegration: false,
           contextIsolation: true,
           partition: `persist:${profileName}`,
-          preload: path.join(__dirname, "preload.js"),
+          preload: this.preloadPath,
         },
         titleBarStyle: "default",
         title: `AIDeskWrap - ${profileName}`,
@@ -333,7 +377,7 @@ class AIDeskWrap {
     const profileSubmenu = profiles.map(profile => ({
       label: `${profile.name}${profile.isDefault ? ' (Default)' : ''}`,
       click: () => {
-        this.createNewWindow(profile.name);
+        this.launchNewInstance(profile.name);
       }
     }));
 
@@ -511,7 +555,7 @@ class AIDeskWrap {
               dialog.showMessageBox({
                 type: 'info',
                 title: 'About AIDeskWrap',
-                message: 'AIDeskWrap v1.0.0',
+                message: 'AIDeskWrap v1.0.1',
                 detail: 'A browser wrapper for AI web tools with profile support.\n\nCreated by Arjuna Del Toso\nhttps://deltoso.net\n\nLicensed under CC BY-NC-SA 4.0'
               });
             }
@@ -531,7 +575,7 @@ class AIDeskWrap {
               dialog.showMessageBox({
                 type: 'info',
                 title: 'About AIDeskWrap',
-                message: 'AIDeskWrap v1.0.0',
+                message: 'AIDeskWrap v1.0.1',
                 detail: 'A browser wrapper for AI web tools with profile support.\n\nCreated by Arjuna Del Toso\nhttps://deltoso.net\n\nLicensed under CC BY-NC-SA 4.0'
               });
             }
