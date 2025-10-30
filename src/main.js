@@ -555,7 +555,7 @@ class AIDeskWrap {
               dialog.showMessageBox({
                 type: 'info',
                 title: 'About AIDeskWrap',
-                message: 'AIDeskWrap v1.0.1',
+                message: 'AIDeskWrap v1.0.2',
                 detail: 'A browser wrapper for AI web tools with profile support.\n\nCreated by Arjuna Del Toso\nhttps://deltoso.net\n\nLicensed under CC BY-NC-SA 4.0'
               });
             }
@@ -575,7 +575,7 @@ class AIDeskWrap {
               dialog.showMessageBox({
                 type: 'info',
                 title: 'About AIDeskWrap',
-                message: 'AIDeskWrap v1.0.1',
+                message: 'AIDeskWrap v1.0.2',
                 detail: 'A browser wrapper for AI web tools with profile support.\n\nCreated by Arjuna Del Toso\nhttps://deltoso.net\n\nLicensed under CC BY-NC-SA 4.0'
               });
             }
